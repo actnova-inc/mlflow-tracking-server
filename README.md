@@ -71,27 +71,46 @@ docker volume create my-mlflow-server-volume
 Run it
 
 ```
-docker run -it -p 8001:6000 --mount source=my-mlflow-server-volume,target=/mlruns --env-file=settings.env mlflow-easyauth:latest
+docker run -d \
+  --restart unless-stopped \
+  -p 10101:6000 \
+  --mount source=my-mlflow-server-volume,target=/mlruns \
+  --env-file=settings.env \
+  --name mlflow-server \
+  mlflow-easyauth:latest
 ```
 
 ## Use in mlflow client
 
-Configure the client
+Configure .env file
+```
+cat <<EOT >> settings.env
+MLFLOW_TRACKING_URI=
+MLFLOW_TRACKING_USERNAME=
+MLFLOW_TRACKING_PASSWORD=
+EOT
+"
+```
 
-    export MLFLOW_TRACKING_URI=http://localhost:8001
-    export MLFLOW_TRACKING_USERNAME=user
-    export MLFLOW_TRACKING_PASSWORD=pass
+Run some code using the mlflow tracking API.
+```python
+import os
 
-Run some code using the mlflow tracking API. There is an example included in this repo
+import dotenv
+import mlflow
 
-    export MLFLOW_EXPERIMENT_NAME=test6
-    python3 example.py
+dotenv.load_dotenv()
+mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
+mlflow.set_experiment("test-experiment")
 
-Open the web browser and go to your deployed .
-You should now have runs tracked with metrics being logged.
+...
 
-For more details see official documentation on
-[mlflow tracking integration](https://www.mlflow.org/docs/latest/quickstart.html#using-the-tracking-api).
+```
+Open mlflow UI on your browser to view the runs.
+
+```
+{MLFLOW_TRACKING_URI} 
+```
 
 # Configuration options
 
