@@ -80,28 +80,22 @@ docker run -d \
   mlflow-easyauth:latest
 ```
 
-## Use in mlflow client
+## How to use mlflow in python (mlflow client)
 
 Configure .env file
 ```
-cat <<EOT >> settings.env
 MLFLOW_TRACKING_URI=
 MLFLOW_TRACKING_USERNAME=
 MLFLOW_TRACKING_PASSWORD=
-EOT
-"
 ```
 
 Run some code using the mlflow tracking API.
 ```python
-import os
-
 import dotenv
 import mlflow
 
 dotenv.load_dotenv()
-mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
-mlflow.set_experiment("test-experiment")
+mlflow.set_experiment("your-experiment-name")
 
 ...
 
